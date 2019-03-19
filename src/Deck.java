@@ -1,6 +1,6 @@
 import java.util.Random;
 
-public class Deck {
+public class Deck implements Cloneable{
 	private Card[] deckOfCards;
 	private int cardPointer;
 	
@@ -27,6 +27,8 @@ public class Deck {
 		this.shuffleDeck();
 	  }
 	
+	
+	
 	public Card draw() {																	//Should the test be here??
 		if ( cardPointer < deckOfCards.length )
 	   	 {
@@ -41,6 +43,14 @@ public class Deck {
 	
 	public int cardsLeftInDeck() {
 		return deckOfCards.length - cardPointer;
+	}
+	
+	public Card[] initialseHand(){
+		Card[] hand = new Card[4];
+		for (int i = 0; i < hand.length; i++) {
+			hand[i] = draw();
+		}
+		return hand;
 	}
 	
 	public void shuffleDeck()
@@ -75,6 +85,14 @@ public class Deck {
 	      }
 	      return ( s );
 	   }
-	
+	@Override
+	public Deck clone() throws CloneNotSupportedException{
+		Deck temp = new Deck();
+		temp.cardPointer = this.cardPointer;
+		for (int i = 0; i < deckOfCards.length; i++) {
+			temp.deckOfCards[i] = this.deckOfCards[i];
+		}
+		return temp;
+	}
 	
 }

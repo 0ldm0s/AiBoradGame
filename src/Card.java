@@ -1,5 +1,5 @@
 
-public class Card {
+public class Card implements Cloneable{
 	private int cardNumber;												//Hvad er bedst? Public Vs private + get-funktioner
 	private String cardColour;		
 	private int numericalColour;
@@ -24,5 +24,9 @@ public class Card {
 		return cardColour;
 	}
 	
+	@Override
+	public Card clone() throws CloneNotSupportedException{
+		return (Card) super.clone();
+	}
 
 }
