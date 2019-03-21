@@ -20,7 +20,32 @@ public class Ai extends Player{
 		
 		int maxHint = evalf(gb)-1; // skal rettes til bedre evalf
 		
-		this.playCard(gb, 2);
+		int card = -1;
+		int maxPlay = 0;
+		int maxDiscard = 0;
+		
+		for (int i = 0; i < discard.length; i++) {
+			if(discard[i] > maxDiscard){
+				maxDiscard = discard[i];
+				card = i;
+			}
+			if(play[i] > maxPlay){
+				maxPlay = discard[i];
+				card = i;
+			}
+		}
+		
+		if(maxHint > maxDiscard && maxHint > maxPlay){
+			// give hint
+		}
+		else if (maxDiscard > maxPlay){
+			this.discard(gb, card);
+		}
+		else{
+			this.playCard(gb, card);
+		}
+		
+		
 	}
 	
 	public int simulatePLay(GameBoard gb, ArrayList<Card> card){
@@ -50,7 +75,7 @@ public class Ai extends Player{
 	
 	public ArrayList<Card> beliefStates (int cardNumber){
 		ArrayList<Card> belief = new ArrayList<>();
-		belief.add(hand[cardNumber]); // skal finde rigtige belief states
+		belief.add(hand[cardNumber]); // TODO skal finde rigtige belief states
 		return belief;
 	}
 	

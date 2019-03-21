@@ -19,6 +19,7 @@ public class GameFlow {
         	}
         	else{
         		gameBoard.printStatus(currentPlayer);
+        		System.out.println(currentPlayer.cardInfo());
         		System.out.println("Select action: 1: discard, 2: play, 3 give hint");
         		
         		
@@ -57,18 +58,9 @@ public class GameFlow {
 				default:
 					break;
 				}
-        		
-        		
-        		
         	}
         	
-            // TODO: Get the card information known to the player with the turn
-
-            // TODO: Print game board for player with the turn
-
-            // TODO: Choose action to perform
-
-            // TODO: Perform the action
+            // TODO: Check is game is over
 
             // Next players turn
             playerTurn = (playerTurn + 1) % 4;

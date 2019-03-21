@@ -1,4 +1,3 @@
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -8,9 +7,9 @@ public class GameBoard implements Cloneable{
 	public static int HINT_MAX = 8;
 	
 	private int life, hints, points;
-	private ArrayList<Player> players; // TODO player class missing // should be in game flow? #GRASP
-	private ArrayList<Card> discardedCards; // TODO card class missing
-	private Deck deck; // TODO deck class missing
+	private ArrayList<Player> players; 
+	private ArrayList<Card> discardedCards;
+	private Deck deck;
 	private int[] table;
 	
 	public GameBoard getStatus() {
@@ -63,8 +62,10 @@ public class GameBoard implements Cloneable{
 	}
 	
 	// action 2
-	public boolean useHintIfPossible() {
+	public boolean useHintIfPossible(int player, int type, int value) {
 		if (hints > 0) {
+			Player p = players.get(player);
+			p.updateInfo(type, value);
 			hints--;
 			return true;
 		} else {
@@ -75,9 +76,11 @@ public class GameBoard implements Cloneable{
 	// action 3
 	public Card putCardOnTable(Card card) {
 		// determine if success or not
-		if (true) { // TODO
+		if (table[card.getNumericalColour()] + 1 == card.getNumber()) {
+			table[card.getNumericalColour()] += 1;
 			points++;
 		} else {
+			discardedCards.add(card);
 			life--;
 		}
 		return deck.draw();
@@ -109,6 +112,7 @@ public class GameBoard implements Cloneable{
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	public GameBoard getClone(){
 		try {
 			GameBoard gb = (GameBoard) super.clone();
@@ -120,7 +124,6 @@ public class GameBoard implements Cloneable{
 			gb.table = table.clone();
 			return gb;
 		} catch (CloneNotSupportedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}
@@ -132,9 +135,6 @@ public class GameBoard implements Cloneable{
 	public void printStatus(Player player) {
 		System.out.println("------------------------------------------");
 		System.out.println(String.format("Life: %d \t Hints: %d Points: %d cards:  %d", life, hints, points, deck.cardsLeftInDeck()));
-		//Print stak på bordet
-		//Pritn discard bunke
-		
 		String[] colors = {"R", "G", "B", "Y", "W"};
 		
 		for (int i = 0; i < table.length; i++) {
@@ -151,35 +151,12 @@ public class GameBoard implements Cloneable{
 				System.out.println(p.toString());
 				continue;
 			}
-			System.out.println(p.cardInfo()); // TODO override player.toString
+			System.out.println(p.cardInfo());
 		}
 	}	
 	
 	@Override
 	public GameBoard clone() throws CloneNotSupportedException{
 		return (GameBoard) super.clone();
-	}
-}
-
-class Player1 {
-//	gets ref to gb when performing action
-//	1: discardCard: return discarded card
-//	drawCard: ask gb for new card
-//	2: updateWithHint: update players card info
-//	3: put card ontable: replace card with new one
-}
-class AI1 extends Player1{
-//	perform best possible action, also updates board accordingly
-}
-class Deck1 {
-	public Card1 drawCard() { return new Card1(); }
-//	drawCard return card from deck
-}
-class Card1 {
-}
-class GameFlow1 {
-//	have the players
-//	have the "print board" uses getStatus
-//	get players card info excluding self
-	
+	}	
 }

@@ -24,6 +24,10 @@ public class Card implements Cloneable{
 		return cardColour;
 	}
 	
+	public int getNumber() {
+		return cardNumber;
+	}
+	
 	@Override
 	public Card clone() throws CloneNotSupportedException{
 		return (Card) super.clone();
