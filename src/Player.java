@@ -69,37 +69,57 @@ public class Player implements Cloneable{
 	}
 	
 	public void updateInfo(int type, int value){
+		//Opdater information om farver hvis type = 1
 		if(type == 1){
+			//Løb kortene i hånden igennem
 			for (int i = 0; i < hand.length; i++) {
+				if(hand[i] == null) {
+					continue;
+				}
+				//Hvis kortet har den rigtige farve sæt alle andre positioner til 1
 				if(hand[i].getNumericalColour() == value){
 					for (int j = 0; j < cardInformation[0][0].length; j++) {
-						if(j != value)
-						cardInformation[i][type-1][j] = 1;
-						totalInfo++;
+						if(j != value) {
+							if(cardInformation[i][type-1][j] == 0)
+								totalInfo++;	//Tæl totalInfo op hvis det er ny information
+							cardInformation[i][type-1][j] = 1;	
+						}
 					}
 				}
+				//Hvis kortet har en anden farve sæt denne position til 1.
 				else{
+					if(cardInformation[i][type-1][value] == 0)
+						totalInfo++;	//Tæl totalInfo op hvis det er ny information						
 					cardInformation[i][type-1][value] = 1;
-					totalInfo++;
 				}
 			}
 		}
+		//Opdater information om tal hvis type = 2
 		else{
 			for (int i = 0; i < hand.length; i++) {
+				if(hand[i] == null) {
+					continue;
+				}
+				//Hvis kortet har det rigtige tal sæt alle andre positioner til 1
 				if(hand[i].getNumber()-1 == value){
 					for (int j = 0; j < cardInformation[0][0].length; j++) {
-						if(j != value)
-						cardInformation[i][type-1][j] = 1;
-						totalInfo++;
+						if(j != value) {
+							if(cardInformation[i][type-1][j] == 0)
+								totalInfo++;	//Tæl totalInfo op hvis det er ny information
+							cardInformation[i][type-1][j] = 1;
+						}
 					}
 				}
+				//Hvis kortet har et andet tal sæt denne position til 1.
 				else{
+					if(cardInformation[i][type-1][value] == 0)
+						totalInfo++;	//Tæl totalInfo op hvis det er ny information
 					cardInformation[i][type-1][value] = 1;
-					totalInfo++;
 				}
 			}
 		}
 	}
+	
 
 	//Laver en deep clone af player-objektet.
 	@Override

@@ -38,12 +38,12 @@ public class Ai extends Player{
 			}
 		}
 		
-		System.out.println("Max hint: " + maxHint + " Max play: " + maxPlay + " Max discard: " + maxDiscard); //DEBUG
+		//System.out.println("Max hint: " + maxHint + " Max play: " + maxPlay + " Max discard: " + maxDiscard); //FOR DEBUG
 		
 		//Sammenlign de bedste forventede værdier for at spille/kassere/hinte og vælg den bedste handling.
 		if(maxHint > maxDiscard && maxHint > maxPlay){
-			int[] hint = maxHints(gb);
-			System.out.println("Gives hint: Player: " + hint[0] +" Type: " + hint[1] + "Value: " + hint[2]);
+			int[] hint = maxHints2(gb);
+			System.out.println("Gives hint: Player: " + hint[0] +" Type: " + hint[1] + " Value: " + hint[2]);
 			this.giveHint(gb, hint[0], hint[1], hint[2]);
 		}
 		else if (maxDiscard >= maxPlay){
@@ -52,6 +52,7 @@ public class Ai extends Player{
 		}
 		else{
 			System.out.println("Plays: " + hand[card].toString());
+			System.out.println("Belief State was: " + beliefStates(card, gb.deck)); //FOR DEBUG
 			this.playCard(gb, card);
 		}
 		
@@ -105,6 +106,51 @@ public class Ai extends Player{
 		return hint;
 	}
 	
+	//Nyt forsøg på at finde bedste hint
+	//Simuler alle mulige hint og gem det der resulterer i den største stigning i totalInfo.
+	public int[] maxHints2(GameBoard gb) {
+		int maxDifference = 0;
+		int type = 0;
+		int value = -1;
+		int maxPlayer = -1;
+		int player = -1;
+		
+		for (Player p :gb.getPlayers()) {
+			player++;
+			//Spring over mig selv
+			if(this.equals(p)){
+				continue;
+			}
+			//Simuler at give hint omkring alle fem farver. Opdater hvis nyt max fundet.
+			for (int i = 0; i < 5; i++) {
+				GameBoard clone = gb.getClone();
+				this.giveHint(clone, player, 1, i);
+				int difference = clone.getPlayers().get(player).totalInfo - gb.getPlayers().get(player).totalInfo;
+				if(difference > maxDifference) {
+					maxDifference = difference;
+					maxPlayer = player;
+					value = i;
+					type = 1;
+				}
+			}
+			//Simuler at give hint omkring alle fem tal. Opdater hvis nyt max fundet.
+			for (int i = 0; i < 5; i++) {
+				GameBoard clone = gb.getClone();
+				this.giveHint(clone, player, 2, i);
+				int difference = clone.getPlayers().get(player).totalInfo - gb.getPlayers().get(player).totalInfo;
+				if(difference > maxDifference) {
+					maxDifference = difference;
+					maxPlayer = player;
+					value = i;
+					type = 2;
+				}
+			}
+		}
+		//Retuner det fundne max
+		int[] hint = {maxPlayer, type, value};
+		return hint;
+	}
+	
 	//Returnerer den gennemsnitlige forventede værdi for at spille et kort i listen card på spillebrættet gb.
 	public double simulatePlay(GameBoard gb, ArrayList<Card> card){
 		int total = 0;
@@ -123,7 +169,8 @@ public class Ai extends Player{
 	//Returnerer den gennemsnitlige forventede værdi for at give et hint. 
 	public double simulateGiveHint(GameBoard gb){
 		GameBoard clone = gb.getClone();
-		int[] hint = maxHints(gb);
+		//int[] hint = maxHints(gb);
+		int[] hint = maxHints2(gb);
 		//System.out.println("Gives hint: Player: " + hint[0] +" Type: " + hint[1] + "Value: " + hint[2]);
 		this.giveHint(clone, hint[0], hint[1], hint[2]);
 		
@@ -169,7 +216,7 @@ public class Ai extends Player{
 				belief.add(hand[i]);
 		}
 		
-		System.out.println("Belief state: " + belief.size());  //FOR DEBUG
+		//System.out.println("Belief state: " + belief.size());  //FOR DEBUG
 		return belief;
 	}
 	//Evalueringsfunktion der giver spillebrættet en værdi som er vores bud på hvor favorabel denne status er.
@@ -178,7 +225,7 @@ public class Ai extends Player{
 		for (Player p : gb.getPlayers()) {
 		totalInfo = totalInfo + p.totalInfo;
 		}
-		return (gb.getPoints() * 5) + (gb.getLife() * 2) + gb.getHints() + totalInfo;
+		return (gb.getPoints() * 10) + (gb.getLife() * 4) + (5*gb.getHints()) + totalInfo;
 	}
 	
 }

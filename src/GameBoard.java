@@ -65,10 +65,10 @@ public class GameBoard implements Cloneable{
 	public boolean useHintIfPossible(int player, int type, int value) {
 		if (hints > 0) {
 			Player p = players.get(player);
-			int plusValue = 0;
-			if(type == 2)
+			//int plusValue = 0;
+			//if(type == 2)
 				//plusValue = -1;
-			p.updateInfo(type, value+plusValue);
+			p.updateInfo(type, value);
 			hints--;
 			return true;
 		} else {

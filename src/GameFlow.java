@@ -16,11 +16,10 @@ public class GameFlow {
         	//gameBoard.printStatus(currentPlayer);
         	
         	if(currentPlayer instanceof Ai){
-        		System.out.println(playerTurn + ": ");
-        		System.out.println(currentPlayer.cardInfo());
-        		System.out.println(currentPlayer.toString());
+        		System.out.println(playerTurn + ":  ( " + currentPlayer.cardInfo() + ")");
+        		//System.out.println(currentPlayer.toString()); //FOR DEBUG
         		((Ai) currentPlayer).takeAction(gameBoard);
-        		System.out.println("Ai done");
+        		//System.out.println("Player " + playerTurn + " done."); <---- TURN ON AGAIN
         	}
         	else{
         		gameBoard.printStatus(currentPlayer);
