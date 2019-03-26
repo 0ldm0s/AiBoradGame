@@ -9,17 +9,19 @@ public class GameFlow {
 
         int playerTurn = 0;
 
+        int endCounter = 0;
+        
         while(playerTurn < 4) { // TODO: Get status of the game
         	Player currentPlayer = gameBoard.getPlayers().get(playerTurn);
         	//gameBoard.printStatus(currentPlayer);
         	
         	if(currentPlayer instanceof Ai){
+        		System.out.println(playerTurn + ": ");
         		((Ai) currentPlayer).takeAction(gameBoard);
         		System.out.println("Ai done");
         	}
         	else{
         		gameBoard.printStatus(currentPlayer);
-        		System.out.println(currentPlayer.cardInfo());
         		System.out.println("Select action: 1: discard, 2: play, 3 give hint");
         		
         		
@@ -60,13 +62,22 @@ public class GameFlow {
 				}
         	}
         	
-            // TODO: Check is game is over
+            if(gameBoard.getLife() < 1){
+            	break;
+            }
+            
+            if(gameBoard.deck.cardsLeftInDeck() < 1){
+            	endCounter++;
+            	if(endCounter > 3){
+            		break;
+            	}
+            }
 
             // Next players turn
             playerTurn = (playerTurn + 1) % 4;
         }
 
-        System.out.println("Final score: "); // TODO: Get the final score of the game
+        System.out.println("Final score: " + gameBoard.getPoints()); // TODO: Get the final score of the game
         
         scanner.close();
     }

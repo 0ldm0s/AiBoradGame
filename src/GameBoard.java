@@ -9,7 +9,7 @@ public class GameBoard implements Cloneable{
 	private int life, hints, points;
 	private ArrayList<Player> players; 
 	private ArrayList<Card> discardedCards;
-	private Deck deck;
+	public Deck deck;
 	private int[] table;
 	
 	public GameBoard getStatus() {
@@ -44,7 +44,7 @@ public class GameBoard implements Cloneable{
 		hints = HINT_MAX;
 		deck = new Deck();
 		players = new ArrayList<Player>(
-				Arrays.asList(new Player(deck.initialseHand()), 
+				Arrays.asList(new Ai(deck.initialseHand()), 
 						new Ai(deck.initialseHand()), 
 						new Ai(deck.initialseHand()), 
 						new Ai(deck.initialseHand()))
@@ -65,7 +65,10 @@ public class GameBoard implements Cloneable{
 	public boolean useHintIfPossible(int player, int type, int value) {
 		if (hints > 0) {
 			Player p = players.get(player);
-			p.updateInfo(type, value);
+			int plusValue = 0;
+			if(type == 2)
+				//plusValue = -1;
+			p.updateInfo(type, value+plusValue);
 			hints--;
 			return true;
 		} else {
@@ -146,12 +149,15 @@ public class GameBoard implements Cloneable{
 			discard += discardedCards.get(i).toString() + " " ;
 		}
 		System.out.println("Discard: " + discard);
+		int i = 0;
 		for (Player p : players) {
 			if(player.equals(p)){
-				System.out.println(p.toString());
+				System.out.println("Player " + i + ": " + p.toString());
+				i++;
 				continue;
 			}
-			System.out.println(p.cardInfo());
+			System.out.println("Player " + i + ": " + p.cardInfo());
+			i++;
 		}
 	}	
 	

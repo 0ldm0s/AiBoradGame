@@ -3,6 +3,7 @@ public class Player implements Cloneable{
 	
 	protected Card[] hand = new Card[4];
 	public int[][][] cardInformation = new int[4][2][5];
+	public int totalInfo = 0;
 
 	
 	public Player(Card[] cards){
@@ -11,12 +12,20 @@ public class Player implements Cloneable{
 	
 	public void discard(GameBoard gb, int card){
 		hand[card] = gb.discardCard(hand[card]);
+		for (int i = 0; i < cardInformation[0][0].length; i++) {
+			totalInfo = totalInfo - cardInformation[card][0][i];
+			totalInfo = totalInfo - cardInformation[card][1][i];
+		}
 		cardInformation[card][0] = new int[5];
 		cardInformation[card][1] = new int[5];
 	}
 	
 	public void playCard(GameBoard gb, int card){
 		hand[card] = gb.putCardOnTable(hand[card]);
+		for (int i = 0; i < cardInformation[0][0].length; i++) {
+			totalInfo = totalInfo - cardInformation[card][0][i];
+			totalInfo = totalInfo - cardInformation[card][1][i];
+		}
 		cardInformation[card][0] = new int[5];
 		cardInformation[card][1] = new int[5];
 	}
@@ -49,7 +58,7 @@ public class Player implements Cloneable{
 	public String cardInfo(){
 		String info = "";
 		for (int i = 0; i < hand.length; i++) {
-			info = info + hand[i].toString() + "\n";
+			info = info + hand[i].toString() + " ";
 		}
 		return info;
 	}
@@ -61,10 +70,12 @@ public class Player implements Cloneable{
 					for (int j = 0; j < cardInformation[0][0].length; j++) {
 						if(j != value)
 						cardInformation[i][type-1][j] = 1;
+						totalInfo++;
 					}
 				}
 				else{
 					cardInformation[i][type-1][value] = 1;
+					totalInfo++;
 				}
 			}
 		}
@@ -74,10 +85,12 @@ public class Player implements Cloneable{
 					for (int j = 0; j < cardInformation[0][0].length; j++) {
 						if(j != value)
 						cardInformation[i][type-1][j] = 1;
+						totalInfo++;
 					}
 				}
 				else{
-					cardInformation[i][type-1][value-1] = 1;
+					cardInformation[i][type-1][value] = 1;
+					totalInfo++;
 				}
 			}
 		}
