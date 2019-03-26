@@ -17,6 +17,8 @@ public class GameFlow {
         	
         	if(currentPlayer instanceof Ai){
         		System.out.println(playerTurn + ": ");
+        		System.out.println(currentPlayer.cardInfo());
+        		System.out.println(currentPlayer.toString());
         		((Ai) currentPlayer).takeAction(gameBoard);
         		System.out.println("Ai done");
         	}
@@ -77,7 +79,8 @@ public class GameFlow {
             playerTurn = (playerTurn + 1) % 4;
         }
 
-        System.out.println("Final score: " + gameBoard.getPoints()); // TODO: Get the final score of the game
+        System.out.println("Final score: " + gameBoard.getPoints());
+        gameBoard.printStatus(gameBoard.getPlayers().get(playerTurn)); // TODO: Get the final score of the game
         
         scanner.close();
     }

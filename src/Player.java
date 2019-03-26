@@ -58,7 +58,12 @@ public class Player implements Cloneable{
 	public String cardInfo(){
 		String info = "";
 		for (int i = 0; i < hand.length; i++) {
-			info = info + hand[i].toString() + " ";
+			if(hand[i] == null){
+				info = info + "null";
+			}
+			else{
+				info = info + hand[i].toString() + " ";
+			}
 		}
 		return info;
 	}
@@ -81,7 +86,7 @@ public class Player implements Cloneable{
 		}
 		else{
 			for (int i = 0; i < hand.length; i++) {
-				if(hand[i].getNumber() == value){
+				if(hand[i].getNumber()-1 == value){
 					for (int j = 0; j < cardInformation[0][0].length; j++) {
 						if(j != value)
 						cardInformation[i][type-1][j] = 1;

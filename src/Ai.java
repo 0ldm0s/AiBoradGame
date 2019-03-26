@@ -35,7 +35,7 @@ public class Ai extends Player{
 			}
 		}
 		
-		//System.out.println("Max hint: " + maxHint + " Max play: " + maxPlay + " Max discard: " + maxDiscard);
+		System.out.println("Max hint: " + maxHint + " Max play: " + maxPlay + " Max discard: " + maxDiscard);
 		
 		if(maxHint > maxDiscard && maxHint > maxPlay){
 			
@@ -63,10 +63,11 @@ public class Ai extends Player{
 		int max = 0;
 		int type = 0;
 		int value = -1;
+		int Maxplayer = -1;
 		int player = -1;
-		
-		for (Player p : gb.getPlayers()) {
 			
+		for (Player p : gb.getPlayers()) {
+			player++;
 			if(this.equals(p)){
 				continue;
 			}
@@ -74,24 +75,27 @@ public class Ai extends Player{
 			for (int i = 0; i < p.hand.length; i++) {
 				if(p.hand[i] == null)
 					continue;
-				number[p.hand[i].getNumber()-1] ++;
+				if(p.cardInformation[i][1][p.hand[i].getNumber()-1] == 0){
+					number[p.hand[i].getNumber()-1] ++;	
+				}
+				
 				if(number[p.hand[i].getNumber()-1] > max){
 					max = number[p.hand[i].getNumber()-1];
 					type = 2;
 					value = p.hand[i].getNumber()-1;
-					player = i;
+					Maxplayer = player;
 				}
 				colours[p.hand[i].getNumericalColour()] ++;
 				if(number[p.hand[i].getNumericalColour()] > max){
 					max = number[p.hand[i].getNumericalColour()];
 					type = 1;
 					value = p.hand[i].getNumericalColour();
-					player = i;
+					Maxplayer = player;
 				}
 			}
 			
 		}
-		int[] hint = {player, type, value};
+		int[] hint = {Maxplayer, type, value};
 		return hint;
 	}
 	
@@ -144,12 +148,12 @@ public class Ai extends Player{
 		int cardsLeft = d.cardsLeftInDeck();
 		for (int i = 0; i < cardsLeft; i++) {
 			Card card = d.draw();
-			if(cardInformation[cardNumber][0][card.getNumber()-1] == 0 && cardInformation[cardNumber][1][card.getNumericalColour()] == 0)
+			if(cardInformation[cardNumber][1][card.getNumber()-1] == 0 && cardInformation[cardNumber][0][card.getNumericalColour()] == 0)
 				belief.add(card);
 		}
 		
 		for (int i = 0; i < 4; i++) {
-			if(cardInformation[cardNumber][0][hand[i].getNumber()-1] == 0 && cardInformation[cardNumber][1][hand[i].getNumericalColour()] == 0)
+			if(cardInformation[cardNumber][1][hand[i].getNumber()-1] == 0 && cardInformation[cardNumber][0][hand[i].getNumericalColour()] == 0)
 				belief.add(hand[i]);
 		}
 		
@@ -162,7 +166,7 @@ public class Ai extends Player{
 		for (Player p : gb.getPlayers()) {
 		totalInfo = totalInfo + p.totalInfo;
 		}
-		return (gb.getPoints() * 4) + (gb.getLife() * 2) + gb.getHints() + totalInfo;
+		return (gb.getPoints() * 5) + (gb.getLife() * 2) + gb.getHints();  //totalInfo;
 	}
 	
 }
