@@ -123,7 +123,10 @@ public class GameBoard implements Cloneable{
 			gb.discardedCards = (ArrayList<Card>) discardedCards.clone();
 			gb.hints = hints;
 			gb.life = life;
-			gb.players = (ArrayList<Player>) players.clone();
+			gb.players = new ArrayList<Player>();
+			for (int i = 0; i < this.players.size(); i++) {
+				gb.players.add(this.players.get(i).clone());				
+			}
 			gb.table = table.clone();
 			return gb;
 		} catch (CloneNotSupportedException e) {

@@ -101,9 +101,21 @@ public class Player implements Cloneable{
 		}
 	}
 
+	//Laver en deep clone af player-objektet.
 	@Override
 	public Player clone() throws CloneNotSupportedException{
-		return (Player) super.clone();
+		Card[] tempHand = this.hand;
+		Player temp = new Player(tempHand);
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 2; j++) {
+				for (int j2 = 0; j2 < 5; j2++) {
+					temp.cardInformation[i][j][j2] = this.cardInformation[i][j][j2];
+				}
+				
+			}	
+		}
+		temp.totalInfo = this.totalInfo;
+		return temp;
 	}
 	
 }
