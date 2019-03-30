@@ -11,6 +11,7 @@ public class GameBoard implements Cloneable{
 	private ArrayList<Card> discardedCards;
 	public Deck deck;
 	private int[] table;
+	public int[][] cardsNotDiscarded;						//<---- Added this (H)
 	
 	public GameBoard getStatus() {
 		GameBoard gb = null;
@@ -52,12 +53,21 @@ public class GameBoard implements Cloneable{
 		discardedCards = new ArrayList<Card>();
 		
 		table = new int[5];
+		
+		int[] temp = {3,2,2,2,1};							//<---- Added this (H)
+		cardsNotDiscarded = new int[5][5];
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j <5; j++) {
+				cardsNotDiscarded[i][j] = temp[j];
+			}
+		}
 	}
 	
 	// action 1
 	public Card discardCard(Card card) {
 		if (hints < HINT_MAX) hints++;
 		discardedCards.add(card);
+		cardsNotDiscarded[card.getNumericalColour()][card.getNumber()-1]--;
 		return deck.draw();
 	}
 	
@@ -84,6 +94,7 @@ public class GameBoard implements Cloneable{
 			points++;
 		} else {
 			discardedCards.add(card);
+			cardsNotDiscarded[card.getNumericalColour()][card.getNumber()-1]--;
 			life--;
 		}
 		return deck.draw();
@@ -127,7 +138,13 @@ public class GameBoard implements Cloneable{
 			for (int i = 0; i < this.players.size(); i++) {
 				gb.players.add(this.players.get(i).clone());				
 			}
-			gb.table = table.clone();
+			gb.table = table.clone();											// Test if this need a deep clone
+			gb.cardsNotDiscarded = new int[5][5];								//<---- Added This (H)
+			for (int i = 0; i < 5; i++) {
+				for (int j = 0; j < i; j++) {
+					gb.cardsNotDiscarded[i][j] = this.cardsNotDiscarded[i][j];
+				}
+			}
 			return gb;
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();

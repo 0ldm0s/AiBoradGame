@@ -23,18 +23,19 @@ public class Ai extends Player{
 		double maxHint = simulateGiveHint(gb); // skal rettes til bedre evalf
 		
 		//Sammenlign de udregnede tal og vælg bedste kandidat at spille/kassere.
-		int card = -1;							//Kort position
+		int cardPlay = -1;							//Kort position
+		int cardDiscard = -1;																		//FIXED MISTAKE
 		double maxPlay = 0;						//Bedste forventede værdi for at spille et kort
 		double maxDiscard = 0;					//Bedste forventede værdi for at kassere et kort
 		
 		for (int i = 0; i < discard.length; i++) {
-			if(discard[i] > maxDiscard){
+			if(discard[i] >  maxDiscard){
 				maxDiscard = discard[i];
-				card = i;
+				cardDiscard = i;
 			}
 			if(play[i] > maxPlay){
 				maxPlay = play[i];
-				card = i;
+				cardPlay = i;
 			}
 		}
 		
@@ -45,15 +46,19 @@ public class Ai extends Player{
 			int[] hint = maxHints2(gb);
 			System.out.println("Gives hint: Player: " + hint[0] +" Type: " + hint[1] + " Value: " + hint[2]);
 			this.giveHint(gb, hint[0], hint[1], hint[2]);
+			System.out.println("There are now " + gb.getHints() + " hints left");
 		}
 		else if (maxDiscard >= maxPlay){
-			System.out.println("Discard: " + hand[card].toString());
-			this.discard(gb, card);
+			System.out.println("Discard: " + hand[cardDiscard].toString());
+			this.discard(gb, cardDiscard);
+			System.out.println("There are now " + gb.getHints() + " hints left");
 		}
 		else{
-			System.out.println("Plays: " + hand[card].toString());
-			System.out.println("Belief State was: " + beliefStates(card, gb.deck)); //FOR DEBUG
-			this.playCard(gb, card);
+			System.out.println("Plays: " + hand[cardPlay].toString());
+			System.out.println("Belief State was: " + beliefStates(cardPlay, gb.deck)); //FOR DEBUG
+			System.out.println("Max hint: " + maxHint + " Max play: " + maxPlay + " Max discard: " + maxDiscard);
+			System.out.println(play[0] + "   " + play[1] + "   " +play[2] + "   "+ play[3]);		
+			this.playCard(gb, cardPlay);
 		}
 		
 		
@@ -225,7 +230,17 @@ public class Ai extends Player{
 		for (Player p : gb.getPlayers()) {
 		totalInfo = totalInfo + p.totalInfo;
 		}
-		return (gb.getPoints() * 10) + (gb.getLife() * 4) + (5*gb.getHints()) + totalInfo;
+		int maxPoints=0;												//<---- Added this (H)
+        for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 5; j++) {
+				//System.out.println("There are " + gb.cardsNotDiscarded[i][j] + " of colour " + i  + " and number " + (j+1));
+				if(gb.cardsNotDiscarded[i][j] == 0) {
+					maxPoints = maxPoints - (5-j);
+					break;
+				}		
+			}
+		}		
+		return (gb.getPoints() * 10) + (gb.getLife() * 10) + (2*gb.getHints()) + (1*totalInfo) +(2*maxPoints);
 	}
 	
 }
