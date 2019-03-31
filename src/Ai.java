@@ -16,6 +16,7 @@ public class Ai extends Player{
 	//Givet spillebrættet tages en beslutning og den givne handling udføres.
 	public void takeAction(GameBoard gb, Player p){
 		int temp = totalInfo;
+		int[] hint = null;
 		//String temp2 = this.toString();
 		if(original)
 			autoUpdate(gb);
@@ -36,7 +37,8 @@ public class Ai extends Player{
 		double maxHint = -1;
 		//Udregn forventede værdi for at give et hint
 		if(original){
-			maxHint = simulateGiveHint(gb); // skal rettes til bedre evalf
+			hint = simulateGiveHint(gb);
+			maxHint = hint[0]; // skal rettes til bedre evalf
 			//System.out.println("Her er max hint: " + maxHint);
 		}
 		//Sammenlign de udregnede tal og vælg bedste kandidat at spille/kassere.
@@ -66,7 +68,7 @@ public class Ai extends Player{
 				this.discard(gb, cardDiscard);
 			}
 			else {
-				
+
 				if(hand[cardDiscard] == null) {
 					System.out.println("***************************************************" +cardInfo());
 					System.out.println(beliefStates(cardDiscard, gb.deck, p));
@@ -77,9 +79,8 @@ public class Ai extends Player{
 			//System.out.println("There are now " + gb.getHints() + " hints left");
 		}
 		else if(maxHint > maxPlay && gb.getHints() > 0){
-			int[] hint = maxHints2(gb);
 			//System.out.println("Gives hint: Player: " + hint[0] +" Type: " + hint[1] + " Value: " + hint[2]);
-			this.giveHint(gb, hint[0], hint[1], hint[2]);
+			this.giveHint(gb, hint[1], hint[2], hint[3]);
 			//System.out.println("There are now " + gb.getHints() + " hints left");
 		}
 		else{
@@ -146,7 +147,7 @@ public class Ai extends Player{
 	//Nyt forsøg på at finde bedste hint
 	//Simuler alle mulige hint og gem det der resulterer i den største stigning i totalInfo.
 	public int[] maxHints2(GameBoard gb) {
-		int maxDifference = 0;
+		int maxDifference = -1;
 		int type = 0;
 		int value = -1;
 		int maxPlayer = -1;
@@ -163,6 +164,8 @@ public class Ai extends Player{
 				GameBoard clone = gb.getClone();
 				this.giveHint(clone, player, 2, i);
 				int difference = clone.getPlayers().get(player).totalInfo - gb.getPlayers().get(player).totalInfo;
+				//System.out.println("Player :" + player + "Difference: " + difference);
+
 				if(difference > maxDifference || (difference == maxDifference && i < value)) {
 
 					//System.out.println(p.cardInfo());
@@ -184,6 +187,16 @@ public class Ai extends Player{
 					value = i;
 					type = 1;
 				}
+
+			}
+		}
+		if(maxPlayer < 0) {
+			System.out.println("maxPlayer: " + maxPlayer + "maxdifference " + maxDifference);
+			for(Player p1 : gb.getPlayers()) {
+				System.out.println("************************");
+				System.out.println(p1.cardInfo() + ": ");
+				System.out.println(p1.toString());
+				System.out.println("TotalInfo: " + p1.totalInfo);
 			}
 		}
 		//Retuner det fundne max
@@ -252,14 +265,21 @@ public class Ai extends Player{
 	}
 
 	//Returnerer den gennemsnitlige forventede værdi for at give et hint. 
-	public double simulateGiveHint(GameBoard gb){
+	public int[] simulateGiveHint(GameBoard gb){
+		if(gb.getHints() == 0) {
+			int[] nope = {0,0,0,0};
+			return nope;
+		}
 		GameBoard clone = gb.getClone();
-		//int[] hint = maxHints(gb);
+//		int[] hint = maxHints2(gb);
+//		//System.out.println("Gives hint: Player: " + hint[0] +" Type: " + hint[1] + "Value: " + hint[2]);
+//		this.giveHint(clone, hint[0], hint[1], hint[2]);
+		
 		int[] hint = maxHints3(gb);
-		//System.out.println("Gives hint: Player: " + hint[0] +" Type: " + hint[1] + "Value: " + hint[2]);
-		this.giveHint(clone, hint[0], hint[1], hint[2]);
-
-		return evalf(clone);
+		giveHint(clone, hint[0], hint[1], hint[2]);
+		int ev = evalf(clone);
+		int[] temp = {ev, hint[0], hint[1], hint[2]};
+		return temp;
 	}
 
 	//Returnerer den gennemsnitlige forventede værdi for at kassere et kort i listen card på spillebrættet gb.
@@ -451,10 +471,10 @@ public class Ai extends Player{
 				}		
 			}
 		}
-		
+
 		if((gb.getPoints() * GameFlow.pointMulti) + (GameFlow.lifeMulti*gb.getLife()) + (GameFlow.hintMulti*gb.getHints()) + (GameFlow.infoMulti*totalInfo) +(GameFlow.maxPointMulti*maxPoints) + 1 < 0) {
-		System.out.println("points:" + gb.getPoints() + ", life: " + gb.getLife() + ", Hints: " + gb.getHints() + ", info :" + totalInfo + ", maxP: " + maxPoints);
-		System.out.println((gb.getPoints() * GameFlow.pointMulti) + (GameFlow.lifeMulti*gb.getLife()) + (GameFlow.hintMulti*gb.getHints()) + (GameFlow.infoMulti*totalInfo) +(GameFlow.maxPointMulti*maxPoints) + 1);
+			System.out.println("points:" + gb.getPoints() + ", life: " + gb.getLife() + ", Hints: " + gb.getHints() + ", info :" + totalInfo + ", maxP: " + maxPoints);
+			System.out.println((gb.getPoints() * GameFlow.pointMulti) + (GameFlow.lifeMulti*gb.getLife()) + (GameFlow.hintMulti*gb.getHints()) + (GameFlow.infoMulti*totalInfo) +(GameFlow.maxPointMulti*maxPoints) + 1);
 		}
 		return (gb.getPoints() * GameFlow.pointMulti) + (GameFlow.lifeMulti*gb.getLife()) + (GameFlow.hintMulti*gb.getHints()) + (GameFlow.infoMulti*totalInfo) +(GameFlow.maxPointMulti*maxPoints) + 1;
 	}
