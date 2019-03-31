@@ -58,20 +58,20 @@ public class Ai extends Player{
 			}
 		}
 		//System.out.println("Discard:" + discard[0] + discard[1] + discard[2] + discard[3]);
-		//System.out.println("Max hint: " + maxHint + " Max play: " + maxPlay + " Max discard: " + maxDiscard); //FOR DEBUG
+		
 
 		//Sammenlign de bedste forventede værdier for at spille/kassere/hinte og vælg den bedste handling.
 
 		if (maxDiscard >= maxPlay && maxDiscard > maxHint && gb.getHints() < 8){
 			if(original){
-				//System.out.println("Discard: " + hand[cardDiscard].toString());
+				System.out.println("Max hint: " + maxHint + " Max play: " + maxPlay + " Max discard: " + maxDiscard); //FOR DEBUG
+				System.out.println("Discard: " + hand[cardDiscard].toString());
 				this.discard(gb, cardDiscard);
 			}
 			else {
-
 				if(hand[cardDiscard] == null) {
-					System.out.println("***************************************************" +cardInfo());
-					System.out.println(beliefStates(cardDiscard, gb.deck, p));
+//					System.out.println("***************************************************" +cardInfo());
+//					System.out.println(beliefStates(cardDiscard, gb.deck, p));
 				}
 				else
 					gb.discardCard(hand[cardDiscard]);
@@ -79,7 +79,8 @@ public class Ai extends Player{
 			//System.out.println("There are now " + gb.getHints() + " hints left");
 		}
 		else if(maxHint > maxPlay && gb.getHints() > 0){
-			//System.out.println("Gives hint: Player: " + hint[0] +" Type: " + hint[1] + " Value: " + hint[2]);
+			System.out.println("Max hint: " + maxHint + " Max play: " + maxPlay + " Max discard: " + maxDiscard); //FOR DEBUG
+			System.out.println("Gives hint: Player: " + hint[1] +" Type: " + hint[2] + " Value: " + hint[3]);
 			this.giveHint(gb, hint[1], hint[2], hint[3]);
 			//System.out.println("There are now " + gb.getHints() + " hints left");
 		}
@@ -87,8 +88,9 @@ public class Ai extends Player{
 			//System.out.println("Max hint: " + maxHint + " Max play: " + maxPlay + " Max discard: " + maxDiscard);
 			//System.out.println(play[0] + "   " + play[1] + "   " +play[2] + "   "+ play[3]);		
 			if(original) {
-				//System.out.println("Plays: " + hand[cardPlay].toString());
-				//System.out.println("Belief State was: " + beliefStates(cardPlay, gb.deck, p)); //FOR DEBUG
+				System.out.println("Max hint: " + maxHint + " Max play: " + maxPlay + " Max discard: " + maxDiscard); //FOR DEBUG
+				System.out.println("Plays: " + hand[cardPlay].toString());
+				System.out.println("Belief State was: " + beliefStates(cardPlay, gb.deck, p)); //FOR DEBUG
 				this.playCard(gb, cardPlay);
 			}
 			else
@@ -224,6 +226,7 @@ public class Ai extends Player{
 				predict(clone);
 				//System.out.println("Giving hint about number " + (i+1) + "gives evalf " + evalf(clone) );
 				if(evalf(clone) > maxEvalf ) {
+					maxEvalf = evalf(clone);
 					maxPlayer = player;
 					value = i;
 					type = 2;
@@ -237,6 +240,7 @@ public class Ai extends Player{
 				//System.out.println("New total predict: ");
 				predict(clone);
 				if(evalf(clone) > maxEvalf) {
+					maxEvalf = evalf(clone);
 					maxPlayer = player;
 					value =i;
 					type = 1;
