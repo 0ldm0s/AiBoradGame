@@ -10,7 +10,7 @@ public class GameBoard implements Cloneable{
 	private ArrayList<Player> players; 
 	private ArrayList<Card> discardedCards;
 	public Deck deck;
-	private int[] table;
+	public int[] table;									//<---- Changed this to public (H)
 	public int[][] cardsNotDiscarded;						//<---- Added this (H)
 	
 	public GameBoard getStatus() {

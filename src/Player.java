@@ -118,8 +118,7 @@ public class Player implements Cloneable{
 				}
 			}
 		}
-	}
-	
+	}	
 
 	//Laver en deep clone af player-objektet.
 	@Override

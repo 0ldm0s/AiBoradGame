@@ -36,7 +36,7 @@ public class Deck implements Cloneable{
 	   	 }
 	   	 else
 	   	 {
-	   	    System.out.println("Out of cards error"); //No more cards in the deck
+	   	    //System.out.println("Out of cards error"); //No more cards in the deck
 	   	    return ( null );  
 	   	 }
 	}

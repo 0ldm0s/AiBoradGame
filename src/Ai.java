@@ -10,6 +10,15 @@ public class Ai extends Player{
 	
 	//Givet spillebrættet tages en beslutning og den givne handling udføres.
 	public void takeAction(GameBoard gb){
+		int temp = totalInfo;
+		//String temp2 = this.toString();
+		autoUpdate(gb);
+		if(totalInfo != temp) {
+			System.out.println("Auto update did something " + (totalInfo - temp) + " bits of informationen added");
+//			System.out.println("Changed from ");
+//			System.out.println(temp2);
+//			gb.printStatus(this);
+		}
 		double[] play = new double[4];
 		double[] discard = new double[4];
 		//Udregn forventede gennemsnitlige værdi for at spille/kassere kort for hver kort position. Gem som 2x4 tal i arrays.
@@ -38,11 +47,11 @@ public class Ai extends Player{
 				cardPlay = i;
 			}
 		}
-		
+		//System.out.println("Discard:" + discard[0] + discard[1] + discard[2] + discard[3]);
 		//System.out.println("Max hint: " + maxHint + " Max play: " + maxPlay + " Max discard: " + maxDiscard); //FOR DEBUG
 		
 		//Sammenlign de bedste forventede værdier for at spille/kassere/hinte og vælg den bedste handling.
-		if(maxHint > maxDiscard && maxHint > maxPlay){
+		if(maxHint > maxDiscard && maxHint > maxPlay && gb.getHints() > 0){
 			int[] hint = maxHints2(gb);
 			System.out.println("Gives hint: Player: " + hint[0] +" Type: " + hint[1] + " Value: " + hint[2]);
 			this.giveHint(gb, hint[0], hint[1], hint[2]);
@@ -56,8 +65,8 @@ public class Ai extends Player{
 		else{
 			System.out.println("Plays: " + hand[cardPlay].toString());
 			System.out.println("Belief State was: " + beliefStates(cardPlay, gb.deck)); //FOR DEBUG
-			System.out.println("Max hint: " + maxHint + " Max play: " + maxPlay + " Max discard: " + maxDiscard);
-			System.out.println(play[0] + "   " + play[1] + "   " +play[2] + "   "+ play[3]);		
+			//System.out.println("Max hint: " + maxHint + " Max play: " + maxPlay + " Max discard: " + maxDiscard);
+			//System.out.println(play[0] + "   " + play[1] + "   " +play[2] + "   "+ play[3]);		
 			this.playCard(gb, cardPlay);
 		}
 		
@@ -224,6 +233,94 @@ public class Ai extends Player{
 		//System.out.println("Belief state: " + belief.size());  //FOR DEBUG
 		return belief;
 	}
+	
+	//Løb kortene igennem og sammenhold med kort på bordet (spillede/kasserede) og kort på de andres hænder
+	//Eksempel: Er den røde femmer blevet kasseret, og du ved dit kort er rødt - så kan det ikke være en femmer.
+	public void autoUpdate(GameBoard gb) {	
+		
+		for (int c = 0; c < 4; c++) {							//c er kortpositionen
+			//Opdater talinfo baseret på info om farve
+			boolean[] edit = {true, true, true, true, true};
+			for (int i = 0; i < 5; i++) {						//i er farven
+				if(cardInformation[c][0][i] == 1)
+					continue;
+				for (int j = 0; j < 5; j++) {					//j er tallet (j+1) er det faktiske tal
+					if(cardInformation[c][1][j] == 1) {
+						edit[j] = false;
+						continue;
+					}			
+					//Kig på bordet og de andre spilleres hånd
+					int left = gb.cardsNotDiscarded[i][j];
+					if(gb.table[i] > j)
+						left--;
+					for (Player p : gb.getPlayers()) {
+						//Spring over mig selv
+						if(this.equals(p)){
+							continue;
+						}
+						//Løb igennem deres hånd
+						for (int k = 0; k < 4; k++) {
+							if(p.hand[k] == null)
+								continue;
+							if(p.hand[k].getNumber() == (j+1) && p.hand[k].getNumericalColour() == i)
+								left--;
+						}
+					}
+					if(left == 0)
+						continue;
+					edit[j] = false;
+				}
+			}
+			for (int j = 0; j < edit.length; j++) {
+				if(edit[j]) {
+					cardInformation[c][1][j] =1;
+					totalInfo++;
+				}
+			}
+			//Opdater farveinfo baseret på info om tal
+			boolean[] editColour = {true, true, true, true, true};
+			for (int j = 0; j < 5; j++) {
+				if(cardInformation[c][1][j] == 1)
+					continue;
+				for (int i = 0; i < 5; i++) {
+					if(cardInformation[c][0][i] == 1) {
+						editColour[i] = false;
+						continue;
+					}
+				//Kig på bordet og de andre spilleres hånd
+				int left = gb.cardsNotDiscarded[i][j];
+				if(gb.table[i] > j)
+					left--;
+				for (Player p : gb.getPlayers()) {
+					//Spring over mig selv
+					if(this.equals(p)){
+						continue;
+					}
+					//Løb igennem deres hånd
+					for (int k = 0; k < 4; k++) {
+						if(p.hand[k] == null)
+							continue;
+						if(p.hand[k].getNumber() == (j+1) && p.hand[k].getNumericalColour() == i)
+							left--;
+					}
+				}
+				if(left == 0)
+					continue;
+				editColour[i] = false;
+				}
+			}
+			for (int i = 0; i < 5; i++) {
+				if(editColour[i]) {
+					cardInformation[c][0][i] =1;
+					totalInfo++;
+				}
+			}
+		}
+	}
+		
+
+	
+	
 	//Evalueringsfunktion der giver spillebrættet en værdi som er vores bud på hvor favorabel denne status er.
 	public int evalf(GameBoard gb){
 		int totalInfo = 0;
@@ -240,7 +337,7 @@ public class Ai extends Player{
 				}		
 			}
 		}		
-		return (gb.getPoints() * 10) + (gb.getLife() * 10) + (2*gb.getHints()) + (1*totalInfo) +(2*maxPoints);
+		return (gb.getPoints() * 10) + (gb.getLife() * 7) + (2*gb.getHints()) + (1*totalInfo) +(1*maxPoints);
 	}
 	
 }
