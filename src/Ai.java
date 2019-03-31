@@ -4,6 +4,7 @@ public class Ai extends Player{
 
 	private int playerID;
 	public boolean original;
+	static int predits = 0;
 	public Ai(Card[] cards, int ID){
 		super(cards);
 		playerID = ID;
@@ -34,9 +35,10 @@ public class Ai extends Player{
 		}
 		double maxHint = -1;
 		//Udregn forventede værdi for at give et hint
-		if(original)
+		if(original){
 			maxHint = simulateGiveHint(gb); // skal rettes til bedre evalf
-
+			System.out.println("Her er max hint: " + maxHint);
+		}
 		//Sammenlign de udregnede tal og vælg bedste kandidat at spille/kassere.
 		int cardPlay = -1;							//Kort position
 		int cardDiscard = -1;																		//FIXED MISTAKE
@@ -65,17 +67,24 @@ public class Ai extends Player{
 		}
 		else if (maxDiscard >= maxPlay){
 			System.out.println("Discard: " + hand[cardDiscard].toString());
-			this.discard(gb, cardDiscard);
+			if(original)
+				this.discard(gb, cardDiscard);
+			else
+				gb.discardCard(hand[cardPlay]);
 			//System.out.println("There are now " + gb.getHints() + " hints left");
 		}
 		else{
 			System.out.println("Plays: " + hand[cardPlay].toString());
-			System.out.println("Belief State was: " + beliefStates(cardPlay, gb.deck, p)); //FOR DEBUG
+			//System.out.println("Belief State was: " + beliefStates(cardPlay, gb.deck, p)); //FOR DEBUG
 			//System.out.println("Max hint: " + maxHint + " Max play: " + maxPlay + " Max discard: " + maxDiscard);
 			//System.out.println(play[0] + "   " + play[1] + "   " +play[2] + "   "+ play[3]);		
-			this.playCard(gb, cardPlay);
+			if(original)
+				this.playCard(gb, cardPlay);
+			else
+				gb.putCardOnTable(hand[cardPlay]);
 		}
 
+		System.out.println(predits);
 
 	}
 
@@ -190,6 +199,7 @@ public class Ai extends Player{
 			for (int i = 0; i < 5; i++) {
 				GameBoard clone = gb.getClone();
 				this.giveHint(clone, player, 2, i);
+				System.out.println("New total predict: ");
 				predict(clone);
 				if(evalf(clone) > maxEvalf ) {
 					maxPlayer = player;
@@ -202,6 +212,7 @@ public class Ai extends Player{
 			for (int i = 0; i < 5; i++) {
 				GameBoard clone = gb.getClone();
 				this.giveHint(clone, player, 1, i);
+				System.out.println("New total predict: ");
 				predict(clone);
 				if(evalf(clone) > maxEvalf) {
 					maxPlayer = player;
@@ -375,11 +386,13 @@ public class Ai extends Player{
 	}
 
 	public void predict(GameBoard gb) {
+		predits++;
 		Ai[] dummies = new Ai[3]; //Indeholder cloner af de andre spillere som Ais. Placering 0 er næste spiller.
 		for (int i = 1; i < 4; i++) {
 			dummies[i-1] = createDummy(gb.getPlayers().get((playerID + i)%4), (playerID + i)%4);
 		}
 		for (Ai dummy: dummies) {
+			System.out.println("New player predict: ");
 			dummy.takeAction(gb, this);
 		}
 	}
