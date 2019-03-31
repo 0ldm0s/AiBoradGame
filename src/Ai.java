@@ -66,9 +66,10 @@ public class Ai extends Player{
 				this.discard(gb, cardDiscard);
 			}
 			else {
+				
 				if(hand[cardDiscard] == null) {
-					//System.out.println("***************************************************" +cardInfo());
-					//System.out.println(beliefStates(cardDiscard, gb.deck, p));
+					System.out.println("***************************************************" +cardInfo());
+					System.out.println(beliefStates(cardDiscard, gb.deck, p));
 				}
 				else
 					gb.discardCard(hand[cardDiscard]);
@@ -412,6 +413,8 @@ public class Ai extends Player{
 		for (Ai dummy: dummies) {
 			//System.out.println("New player predict: ");
 			dummy.takeAction(gb, this);
+			if(gb.getLife() == 0)
+				break;
 		}
 	}
 
@@ -449,9 +452,10 @@ public class Ai extends Player{
 			}
 		}
 		
-//		if((gb.getPoints() * 12) + (gb.getLife() * 7) + (1*gb.getHints()) + (1*totalInfo) +(2*maxPoints) < 0) {
-//		System.out.println("points:" + gb.getPoints() + ", life: " + gb.getLife() + ", Hints: " + gb.getHints() + ", info :" + totalInfo + ", maxP: " + maxPoints);
-//		}
+		if((gb.getPoints() * GameFlow.pointMulti) + (GameFlow.lifeMulti*gb.getLife()) + (GameFlow.hintMulti*gb.getHints()) + (GameFlow.infoMulti*totalInfo) +(GameFlow.maxPointMulti*maxPoints) + 1 < 0) {
+		System.out.println("points:" + gb.getPoints() + ", life: " + gb.getLife() + ", Hints: " + gb.getHints() + ", info :" + totalInfo + ", maxP: " + maxPoints);
+		System.out.println((gb.getPoints() * GameFlow.pointMulti) + (GameFlow.lifeMulti*gb.getLife()) + (GameFlow.hintMulti*gb.getHints()) + (GameFlow.infoMulti*totalInfo) +(GameFlow.maxPointMulti*maxPoints) + 1);
+		}
 		return (gb.getPoints() * GameFlow.pointMulti) + (GameFlow.lifeMulti*gb.getLife()) + (GameFlow.hintMulti*gb.getHints()) + (GameFlow.infoMulti*totalInfo) +(GameFlow.maxPointMulti*maxPoints) + 1;
 	}
 
