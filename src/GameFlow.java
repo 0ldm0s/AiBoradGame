@@ -4,6 +4,12 @@ public class GameFlow {
 
 	GameBoard gameBoard = new GameBoard();
 	Scanner scanner = new Scanner(System.in);
+	
+	public static int maxPointMulti;
+	public static int hintMulti;
+	public static int infoMulti;
+	public static int lifeMulti;
+	public static int pointMulti;
 
 	GameFlow() {
 
@@ -17,7 +23,7 @@ public class GameFlow {
 
 			if(currentPlayer instanceof Ai){
 				//System.out.println("****************************************************'");
-				System.out.println(playerTurn + ":  ( " + currentPlayer.cardInfo() + ")");
+				//System.out.println(playerTurn + ":  ( " + currentPlayer.cardInfo() + ")");
 				//        		for (Player p : gameBoard.getPlayers()) {
 				//					if(p.equals(currentPlayer))
 				//						continue;
@@ -88,9 +94,9 @@ public class GameFlow {
 //				break;
 		}
 
-		System.out.println("Final score: " + gameBoard.getPoints());
-		gameBoard.printStatus(gameBoard.getPlayers().get(playerTurn)); // TODO: Get the final score of the game
-		System.out.println(gameBoard.getPlayers().get(playerTurn).cardInfo());
+		//System.out.println("Final score: " + gameBoard.getPoints());
+		//gameBoard.printStatus(gameBoard.getPlayers().get(playerTurn)); // TODO: Get the final score of the game
+		//System.out.println(gameBoard.getPlayers().get(playerTurn).cardInfo());
 		scanner.close();
 	}
 }
