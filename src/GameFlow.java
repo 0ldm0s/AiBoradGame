@@ -16,9 +16,16 @@ public class GameFlow {
         	//gameBoard.printStatus(currentPlayer);
         	
         	if(currentPlayer instanceof Ai){
+        		//System.out.println("****************************************************'");
         		System.out.println(playerTurn + ":  ( " + currentPlayer.cardInfo() + ")");
+//        		for (Player p : gameBoard.getPlayers()) {
+//					if(p.equals(currentPlayer))
+//						continue;
+//					System.out.println(p.cardInfo());
+//				}
+//        		System.out.println(gameBoard.getPlayers().get(playerTurn));
         		//System.out.println(currentPlayer.toString()); //FOR DEBUG
-        		((Ai) currentPlayer).takeAction(gameBoard);
+        		((Ai) currentPlayer).takeAction(gameBoard, currentPlayer);
         		//System.out.println("Player " + playerTurn + " done."); <---- TURN ON AGAIN
         	}
         	else{
@@ -54,7 +61,7 @@ public class GameFlow {
 					}
 					else{
 						System.out.println("Which number?");
-						value = scanner.nextInt();
+						value = scanner.nextInt()-1;
 					}
 					currentPlayer.giveHint(gameBoard, player, choice, value);
 					break;
@@ -69,18 +76,20 @@ public class GameFlow {
             
             if(gameBoard.deck.cardsLeftInDeck() < 1){
             	endCounter++;
-            	if(endCounter > 3){
+            	if(endCounter > 4){
             		break;
             	}
             }
 
             // Next players turn
             playerTurn = (playerTurn + 1) % 4;
+        if(playerTurn == 0)
+        	break;
         }
 
         System.out.println("Final score: " + gameBoard.getPoints());
         gameBoard.printStatus(gameBoard.getPlayers().get(playerTurn)); // TODO: Get the final score of the game
-        
+        System.out.println(gameBoard.getPlayers().get(playerTurn).cardInfo());
         scanner.close();
     }
 }

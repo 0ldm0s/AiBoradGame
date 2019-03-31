@@ -11,7 +11,8 @@ public class Player implements Cloneable{
 	}
 	
 	public void discard(GameBoard gb, int card){
-		hand[card] = gb.discardCard(hand[card]);
+		gb.discardCard(hand[card]);
+		hand[card] = gb.deck.draw();
 		for (int i = 0; i < cardInformation[0][0].length; i++) {
 			totalInfo = totalInfo - cardInformation[card][0][i];
 			totalInfo = totalInfo - cardInformation[card][1][i];
@@ -21,7 +22,8 @@ public class Player implements Cloneable{
 	}
 	
 	public void playCard(GameBoard gb, int card){
-		hand[card] = gb.putCardOnTable(hand[card]);
+		gb.putCardOnTable(hand[card]);
+		hand[card] = gb.deck.draw();
 		for (int i = 0; i < cardInformation[0][0].length; i++) {
 			totalInfo = totalInfo - cardInformation[card][0][i];
 			totalInfo = totalInfo - cardInformation[card][1][i];
