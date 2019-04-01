@@ -90,6 +90,7 @@ public class Ai extends Player{
 			if(original) {
 				//System.out.println("Max hint: " + maxHint + " Max play: " + maxPlay + " Max discard: " + maxDiscard); //FOR DEBUG
 				System.out.println("Plays: " + hand[cardPlay].toString());
+				//System.out.println("Plays: " + hand[cardPlay].toString());
 				//System.out.println("Belief State was: " + beliefStates(cardPlay, gb.deck, p)); //FOR DEBUG
 				this.playCard(gb, cardPlay);
 			}
@@ -275,11 +276,11 @@ public class Ai extends Player{
 			return nope;
 		}
 		GameBoard clone = gb.getClone();
-		int[] hint = maxHints2(gb);
 //		//System.out.println("Gives hint: Player: " + hint[0] +" Type: " + hint[1] + "Value: " + hint[2]);
 //		this.giveHint(clone, hint[0], hint[1], hint[2]);
 		
 		//int[] hint = maxHints3(gb);
+		int[] hint = maxHints3(gb);
 		giveHint(clone, hint[0], hint[1], hint[2]);
 		int ev = evalf(clone);
 		int[] temp = {ev, hint[0], hint[1], hint[2]};
