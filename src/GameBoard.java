@@ -43,13 +43,14 @@ public class GameBoard implements Cloneable{
 		life = LIFE_MAX;
 		hints = HINT_MAX;
 		deck = new Deck();
-		players = new ArrayList<>(
-				Arrays.asList(new Ai(deck.initialseHand()),
-						new Ai(deck.initialseHand()),
-						new Ai(deck.initialseHand()),
-						new Ai(deck.initialseHand()))
-		);
-		discardedCards = new ArrayList<>();
+		players = new ArrayList<Player>(
+				Arrays.asList(new Ai(deck.initialseHand(),0),
+						new Ai(deck.initialseHand(),1),
+						//new Ai(deck.initialseHand(),2),
+						new Player(deck.initialseHand()),
+						new Ai(deck.initialseHand(),3))
+				);
+		discardedCards = new ArrayList<Card>();
 		
 		table = new int[5];
 		
@@ -61,11 +62,10 @@ public class GameBoard implements Cloneable{
 	}
 	
 	// action 1
-	public Card discardCard(Card card) {
+	public void discardCard(Card card) {
 		if (hints < HINT_MAX) hints++;
 		discardedCards.add(card);
 		cardsNotDiscarded[card.getNumericalColour()][card.getNumber()-1]--;
-		return deck.draw();
 	}
 	
 	// action 2
@@ -78,7 +78,7 @@ public class GameBoard implements Cloneable{
 	}
 	
 	// action 3
-	public Card putCardOnTable(Card card) {
+	public void putCardOnTable(Card card) {
 		// determine if success or not
 		if (table[card.getNumericalColour()] + 1 == card.getNumber()) {
 			table[card.getNumericalColour()] += 1;
@@ -88,8 +88,6 @@ public class GameBoard implements Cloneable{
 			cardsNotDiscarded[card.getNumericalColour()][card.getNumber()-1]--;
 			life--;
 		}
-		return deck.draw();
-		
 	}
 	
 	public int getPoints(){

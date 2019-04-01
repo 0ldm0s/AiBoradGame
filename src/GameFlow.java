@@ -5,31 +5,48 @@ public class GameFlow {
     private GameBoard gameBoard = new GameBoard();
     private Scanner scanner = new Scanner(System.in);
 	
-    GameFlow() {
+	public static int maxPointMulti = 0;
+	public static int hintMulti = 2;
+	public static int infoMulti = 1;
+	public static int lifeMulti = 1;
+	public static int pointMulti = 4;
 
-        int playerTurn = 0;
+	GameFlow() {
 
-        int endCounter = 0;
-        
-        while(playerTurn < 4) {
-        	Player currentPlayer = gameBoard.getPlayers().get(playerTurn);
+		int playerTurn = 0;
 
-        	
-        	if(currentPlayer instanceof Ai){
-        		System.out.println(playerTurn + ":  ( " + currentPlayer.cardInfo() + ")");
-        		((Ai) currentPlayer).takeAction(gameBoard);
-        		//System.out.println("Player " + playerTurn + " done."); <---- TURN ON AGAIN
-        	}
-        	else{
-        		gameBoard.printStatus(currentPlayer);
-        		System.out.println("Select action: 1: discard, 2: play, 3 give hint");
-        		
-        		
-        		
-        		int action = scanner.nextInt();
+		int endCounter = 0;
 
-        		
-        		switch (action) {
+		while(playerTurn < 4) { 
+			Player currentPlayer = gameBoard.getPlayers().get(playerTurn);
+			//gameBoard.printStatus(currentPlayer);
+
+			if(currentPlayer instanceof Ai){
+				System.out.println("AI: " + playerTurn +": " );
+				//System.out.println(playerTurn + ":  ( " + currentPlayer.cardInfo() + ")");
+				//System.out.println("****************************************************'");
+//				System.out.println(playerTurn + ":  ( " + currentPlayer.cardInfo() + ")");
+				//        		for (Player p : gameBoard.getPlayers()) {
+				//					if(p.equals(currentPlayer))
+				//						continue;
+				//					System.out.println(p.cardInfo());
+				//				}
+				//        		System.out.println(gameBoard.getPlayers().get(playerTurn));
+				//System.out.println(currentPlayer.toString()); //FOR DEBUG
+				((Ai) currentPlayer).takeAction(gameBoard, currentPlayer);
+				//System.out.println("Player " + playerTurn + " done."); <---- TURN ON AGAIN
+			}
+			else{
+				gameBoard.printStatus(currentPlayer);
+				System.out.println("Select action: 1: discard, 2: play, 3 give hint");
+
+
+
+				int action = scanner.nextInt();
+
+				//currentPlayer.takeAction(gameBoard, action);
+
+				switch (action) {
 				case 1:
 					System.out.println("Which card?");
 					int position = scanner.nextInt();
@@ -52,32 +69,35 @@ public class GameFlow {
 					}
 					else{
 						System.out.println("Which number?");
-						value = scanner.nextInt();
+						value = scanner.nextInt()-1;
 					}
 					currentPlayer.giveHint(gameBoard, player, choice, value);
 					break;
 				default:
 					break;
 				}
-        	}
-        	
-            if(gameBoard.getLife() < 1){
-            	break;
-            }
-            
-            if(gameBoard.deck.cardsLeftInDeck() < 1){
-            	endCounter++;
-            	if(endCounter > 3){
-            		break;
-            	}
-            }
+			}
 
-            // Next players turn
-            playerTurn = (playerTurn + 1) % 4;
-        }
+			if(gameBoard.getLife() < 1){
+				break;
+			}
+
+			if(gameBoard.deck.cardsLeftInDeck() < 1){
+				endCounter++;
+				if(endCounter > 4){
+					break;
+				}
+			}
+
+
+			// Next players turn
+			playerTurn = (playerTurn + 1) % 4;
+//			if(playerTurn == 0)
+//				break;
+		}
 
         System.out.println("Final score: " + gameBoard.getPoints());
-        gameBoard.printStatus(gameBoard.getPlayers().get(playerTurn));
+        //gameBoard.printStatus(gameBoard.getPlayers().get(playerTurn));
         
         scanner.close();
     }

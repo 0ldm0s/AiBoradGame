@@ -11,12 +11,17 @@ public class Player implements Cloneable{
 	}
 	
 	public void discard(GameBoard gb, int card){
-		hand[card] = gb.discardCard(hand[card]);
+		gb.discardCard(hand[card]);
+        hand[card] = gb.deck.draw();
 		recalculateTotalInfo(card);
+
+
+
 	}
 	
 	public void playCard(GameBoard gb, int card){
-		hand[card] = gb.putCardOnTable(hand[card]);
+		gb.putCardOnTable(hand[card]);
+		hand[card] = gb.deck.draw();
 		recalculateTotalInfo(card);
 	}
 
