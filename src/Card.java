@@ -1,9 +1,9 @@
 
 public class Card implements Cloneable{
-	private int cardNumber;												//Hvad er bedst? Public Vs private + get-funktioner
+	private int cardNumber;
 	private String cardColour;		
 	private int numericalColour;
-	private String[] colours = {"R", "G", "B", "Y", "W"};				//Ens for alle! Så den skal vel ikke være private?
+	private String[] colours = {"R", "G", "B", "Y", "W"};
 	
 	public Card(int n, int c) {
 		cardNumber = n;
@@ -14,8 +14,7 @@ public class Card implements Cloneable{
 	public String toString() {
         return cardColour + cardNumber;
     }
-	
-	//String or int most useful?
+
 	public int getNumericalColour() {
 		return numericalColour;
 	}

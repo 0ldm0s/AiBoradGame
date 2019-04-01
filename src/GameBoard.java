@@ -3,21 +3,20 @@ import java.util.Arrays;
 
 public class GameBoard implements Cloneable{
 
-	public static int LIFE_MAX = 3;
-	public static int HINT_MAX = 8;
+	private static int LIFE_MAX = 3;
+	private static int HINT_MAX = 8;
 	
 	private int life, hints, points;
 	private ArrayList<Player> players; 
 	private ArrayList<Card> discardedCards;
 	public Deck deck;
-	public int[] table;									//<---- Changed this to public (H)
-	public int[][] cardsNotDiscarded;						//<---- Added this (H)
+	public int[] table;
+	public int[][] cardsNotDiscarded;
 	
 	public GameBoard getStatus() {
 		GameBoard gb = null;
 		try {
-			gb = (GameBoard) this.clone();
-			//gb.players.remove(currentPlayer);
+			gb = this.clone();
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
 		}
@@ -44,22 +43,20 @@ public class GameBoard implements Cloneable{
 		life = LIFE_MAX;
 		hints = HINT_MAX;
 		deck = new Deck();
-		players = new ArrayList<Player>(
-				Arrays.asList(new Ai(deck.initialseHand()), 
-						new Ai(deck.initialseHand()), 
-						new Ai(deck.initialseHand()), 
+		players = new ArrayList<>(
+				Arrays.asList(new Ai(deck.initialseHand()),
+						new Ai(deck.initialseHand()),
+						new Ai(deck.initialseHand()),
 						new Ai(deck.initialseHand()))
-				);
-		discardedCards = new ArrayList<Card>();
+		);
+		discardedCards = new ArrayList<>();
 		
 		table = new int[5];
 		
-		int[] temp = {3,2,2,2,1};							//<---- Added this (H)
+		int[] temp = {3,2,2,2,1};
 		cardsNotDiscarded = new int[5][5];
 		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j <5; j++) {
-				cardsNotDiscarded[i][j] = temp[j];
-			}
+			System.arraycopy(temp, 0, cardsNotDiscarded[i], 0, 5);
 		}
 	}
 	
@@ -72,17 +69,11 @@ public class GameBoard implements Cloneable{
 	}
 	
 	// action 2
-	public boolean useHintIfPossible(int player, int type, int value) {
+	public void useHintIfPossible(int player, int type, int value) {
 		if (hints > 0) {
 			Player p = players.get(player);
-			//int plusValue = 0;
-			//if(type == 2)
-				//plusValue = -1;
 			p.updateInfo(type, value);
 			hints--;
-			return true;
-		} else {
-			return false;
 		}
 	}
 	
@@ -129,6 +120,7 @@ public class GameBoard implements Cloneable{
 	@SuppressWarnings("unchecked")
 	public GameBoard getClone(){
 		try {
+			// Clone all information
 			GameBoard gb = (GameBoard) super.clone();
 			gb.deck = deck.clone();
 			gb.discardedCards = (ArrayList<Card>) discardedCards.clone();
@@ -136,21 +128,19 @@ public class GameBoard implements Cloneable{
 			gb.life = life;
 			gb.players = new ArrayList<Player>();
 			for (int i = 0; i < this.players.size(); i++) {
-				gb.players.add(this.players.get(i).clone());				
+				gb.players.add(this.players.get(i).getClone());
 			}
-			gb.table = table.clone();											// Test if this need a deep clone
-			gb.cardsNotDiscarded = new int[5][5];								//<---- Added This (H)
+			gb.table = table.clone();
+			gb.cardsNotDiscarded = new int[5][5];
 			for (int i = 0; i < 5; i++) {
-				for (int j = 0; j < i; j++) {
-					gb.cardsNotDiscarded[i][j] = this.cardsNotDiscarded[i][j];
-				}
+				System.arraycopy(this.cardsNotDiscarded[i], 0, gb.cardsNotDiscarded[i], 0, i);
 			}
 			return gb;
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
 			return null;
 		}
-		
+
 
 	}
 	
@@ -164,9 +154,9 @@ public class GameBoard implements Cloneable{
 			System.out.println(colors[i] + ": " + table[i]);
 		}
 		
-		String discard = "";
-		for (int i = 0; i < discardedCards.size(); i++) {
-			discard += discardedCards.get(i).toString() + " " ;
+		StringBuilder discard = new StringBuilder();
+		for (Card discardedCard : discardedCards) {
+			discard.append(discardedCard.toString()).append(" ");
 		}
 		System.out.println("Discard: " + discard);
 		int i = 0;

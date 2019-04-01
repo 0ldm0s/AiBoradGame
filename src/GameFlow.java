@@ -2,8 +2,8 @@ import java.util.Scanner;
 
 public class GameFlow {
 
-    GameBoard gameBoard = new GameBoard();
-    Scanner scanner = new Scanner(System.in);
+    private GameBoard gameBoard = new GameBoard();
+    private Scanner scanner = new Scanner(System.in);
 	
     GameFlow() {
 
@@ -11,13 +11,12 @@ public class GameFlow {
 
         int endCounter = 0;
         
-        while(playerTurn < 4) { // TODO: Get status of the game
+        while(playerTurn < 4) {
         	Player currentPlayer = gameBoard.getPlayers().get(playerTurn);
-        	//gameBoard.printStatus(currentPlayer);
+
         	
         	if(currentPlayer instanceof Ai){
         		System.out.println(playerTurn + ":  ( " + currentPlayer.cardInfo() + ")");
-        		//System.out.println(currentPlayer.toString()); //FOR DEBUG
         		((Ai) currentPlayer).takeAction(gameBoard);
         		//System.out.println("Player " + playerTurn + " done."); <---- TURN ON AGAIN
         	}
@@ -28,8 +27,7 @@ public class GameFlow {
         		
         		
         		int action = scanner.nextInt();
-        		
-        		//currentPlayer.takeAction(gameBoard, action);
+
         		
         		switch (action) {
 				case 1:
@@ -79,7 +77,7 @@ public class GameFlow {
         }
 
         System.out.println("Final score: " + gameBoard.getPoints());
-        gameBoard.printStatus(gameBoard.getPlayers().get(playerTurn)); // TODO: Get the final score of the game
+        gameBoard.printStatus(gameBoard.getPlayers().get(playerTurn));
         
         scanner.close();
     }

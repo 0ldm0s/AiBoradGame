@@ -1,7 +1,7 @@
 
 public class Player implements Cloneable{
 	
-	protected Card[] hand = new Card[4];
+	protected Card[] hand;
 	public int[][][] cardInformation = new int[4][2][5];
 	public int totalInfo = 0;
 
@@ -12,16 +12,15 @@ public class Player implements Cloneable{
 	
 	public void discard(GameBoard gb, int card){
 		hand[card] = gb.discardCard(hand[card]);
-		for (int i = 0; i < cardInformation[0][0].length; i++) {
-			totalInfo = totalInfo - cardInformation[card][0][i];
-			totalInfo = totalInfo - cardInformation[card][1][i];
-		}
-		cardInformation[card][0] = new int[5];
-		cardInformation[card][1] = new int[5];
+		recalculateTotalInfo(card);
 	}
 	
 	public void playCard(GameBoard gb, int card){
 		hand[card] = gb.putCardOnTable(hand[card]);
+		recalculateTotalInfo(card);
+	}
+
+	private void recalculateTotalInfo(int card) {
 		for (int i = 0; i < cardInformation[0][0].length; i++) {
 			totalInfo = totalInfo - cardInformation[card][0][i];
 			totalInfo = totalInfo - cardInformation[card][1][i];
@@ -37,101 +36,93 @@ public class Player implements Cloneable{
 	@Override
 	public String toString(){
 
-		String info = "Player information: "; 
+		StringBuilder info = new StringBuilder("Player information: ");
 		
 		for (int i = 0; i < hand.length; i++) {
-			info = info + "\n Card " + (i+1) + ": Color: " ;
-			
-			for (int j = 0; j < cardInformation[0][0].length; j++) {
-				info = info + " " + cardInformation[i][0][j];
-			}
-			info = info + " number: ";
-			
-			for (int j = 0; j < cardInformation[0][0].length; j++) {
-				info = info + " " + cardInformation[i][1][j];
-			}
-			
+			info.append("\n Card ").append(i + 1).append(": Color: ");
+
+			appendCardInformation(info, 0, i);
+
+			info.append(" number: ");
+
+			appendCardInformation(info, 1, i);
 		}
-		return info;
+		return info.toString();
 	}
-	
+
+	// Append information of the at the given position
+	private void appendCardInformation(StringBuilder info, int type, int cardPosition) {
+		for (int j = 0; j < cardInformation[0][0].length; j++) {
+			info.append(" ").append(cardInformation[cardPosition][type][j]);
+		}
+	}
+
+	// Get information of cards in hand
 	public String cardInfo(){
-		String info = "";
-		for (int i = 0; i < hand.length; i++) {
-			if(hand[i] == null){
-				info = info + "null";
-			}
-			else{
-				info = info + hand[i].toString() + " ";
+		StringBuilder info = new StringBuilder();
+		for (Card card : hand) {
+			if (card == null) {
+				info.append("null ");
+			} else {
+				info.append(card.toString()).append(" ");
 			}
 		}
-		return info;
+		return info.toString();
 	}
 	
 	public void updateInfo(int type, int value){
-		//Opdater information om farver hvis type = 1
+		// Update information of colours if type is 1
 		if(type == 1){
-			//Løb kortene i hånden igennem
-			for (int i = 0; i < hand.length; i++) {
-				if(hand[i] == null) {
-					continue;
-				}
-				//Hvis kortet har den rigtige farve sæt alle andre positioner til 1
-				if(hand[i].getNumericalColour() == value){
-					for (int j = 0; j < cardInformation[0][0].length; j++) {
-						if(j != value) {
-							if(cardInformation[i][type-1][j] == 0)
-								totalInfo++;	//Tæl totalInfo op hvis det er ny information
-							cardInformation[i][type-1][j] = 1;	
-						}
-					}
-				}
-				//Hvis kortet har en anden farve sæt denne position til 1.
-				else{
-					if(cardInformation[i][type-1][value] == 0)
-						totalInfo++;	//Tæl totalInfo op hvis det er ny information						
-					cardInformation[i][type-1][value] = 1;
-				}
-			}
+			// Go through cards in hand
+			checkForMatch(type, value);
 		}
-		//Opdater information om tal hvis type = 2
+		// Update information of numbers if type is 2
 		else{
-			for (int i = 0; i < hand.length; i++) {
-				if(hand[i] == null) {
-					continue;
+			checkForMatch(type, value);
+		}
+	}
+
+	private void checkForMatch(int type, int value) {
+		for (int i = 0; i < hand.length; i++) {
+			if(hand[i] == null) {
+				continue;
+			}
+			// If card has correct number then set all other positions to 1
+			if((type == 1 && hand[i].getNumericalColour() == value) || (type==2 && hand[i].getNumber()-1 == value)){
+				updateMatch(type, value, i);
+			}
+			// If card has different number then set this position to 1
+			else{
+				if(cardInformation[i][type-1][value] == 0) {
+					// Increment total info if information is new
+					totalInfo++;
 				}
-				//Hvis kortet har det rigtige tal sæt alle andre positioner til 1
-				if(hand[i].getNumber()-1 == value){
-					for (int j = 0; j < cardInformation[0][0].length; j++) {
-						if(j != value) {
-							if(cardInformation[i][type-1][j] == 0)
-								totalInfo++;	//Tæl totalInfo op hvis det er ny information
-							cardInformation[i][type-1][j] = 1;
-						}
-					}
-				}
-				//Hvis kortet har et andet tal sæt denne position til 1.
-				else{
-					if(cardInformation[i][type-1][value] == 0)
-						totalInfo++;	//Tæl totalInfo op hvis det er ny information
-					cardInformation[i][type-1][value] = 1;
-				}
+				cardInformation[i][type-1][value] = 1;
 			}
 		}
-	}	
+	}
 
-	//Laver en deep clone af player-objektet.
-	@Override
-	public Player clone() throws CloneNotSupportedException{
+	// Update the information when a number or colour matches
+	private void updateMatch(int type, int value, int cardPosition) {
+		for (int j = 0; j < cardInformation[0][0].length; j++) {
+			if(j != value) {
+				if(cardInformation[cardPosition][type-1][j] == 0) {
+					// Increment total info if information is new
+					totalInfo++;
+				}
+				cardInformation[cardPosition][type-1][j] = 1;
+			}
+		}
+	}
+
+	//Creates a deep copy of the Player object
+	public Player getClone() {
 		Card[] tempHand = this.hand;
 		Player temp = new Player(tempHand);
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 2; j++) {
-				for (int j2 = 0; j2 < 5; j2++) {
-					temp.cardInformation[i][j][j2] = this.cardInformation[i][j][j2];
-				}
-				
-			}	
+				System.arraycopy(this.cardInformation[i][j], 0, temp.cardInformation[i][j], 0, 5);
+			}
 		}
 		temp.totalInfo = this.totalInfo;
 		return temp;
