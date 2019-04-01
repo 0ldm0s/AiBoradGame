@@ -8,7 +8,7 @@ public class GameFlow {
 	public static int maxPointMulti = 0;
 	public static int hintMulti = 2;
 	public static int infoMulti = 1;
-	public static int lifeMulti = 0;
+	public static int lifeMulti = 1;
 	public static int pointMulti = 4;
 
 	GameFlow() {
@@ -22,8 +22,8 @@ public class GameFlow {
 			//gameBoard.printStatus(currentPlayer);
 
 			if(currentPlayer instanceof Ai){
-				//System.out.println("****************************************************'");
-				System.out.println(playerTurn + ":  ( " + currentPlayer.cardInfo() + ")");
+				System.out.println("AI: " + playerTurn +": " );
+				//System.out.println(playerTurn + ":  ( " + currentPlayer.cardInfo() + ")");
 				//        		for (Player p : gameBoard.getPlayers()) {
 				//					if(p.equals(currentPlayer))
 				//						continue;

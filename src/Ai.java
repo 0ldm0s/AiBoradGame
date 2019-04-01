@@ -64,7 +64,7 @@ public class Ai extends Player{
 
 		if (maxDiscard >= maxPlay && maxDiscard > maxHint && gb.getHints() < 8){
 			if(original){
-				System.out.println("Max hint: " + maxHint + " Max play: " + maxPlay + " Max discard: " + maxDiscard); //FOR DEBUG
+				//System.out.println("Max hint: " + maxHint + " Max play: " + maxPlay + " Max discard: " + maxDiscard); //FOR DEBUG
 				System.out.println("Discard: " + hand[cardDiscard].toString());
 				this.discard(gb, cardDiscard);
 			}
@@ -79,7 +79,7 @@ public class Ai extends Player{
 			//System.out.println("There are now " + gb.getHints() + " hints left");
 		}
 		else if(maxHint > maxPlay && gb.getHints() > 0){
-			System.out.println("Max hint: " + maxHint + " Max play: " + maxPlay + " Max discard: " + maxDiscard); //FOR DEBUG
+			//System.out.println("Max hint: " + maxHint + " Max play: " + maxPlay + " Max discard: " + maxDiscard); //FOR DEBUG
 			System.out.println("Gives hint: Player: " + hint[1] +" Type: " + hint[2] + " Value: " + hint[3]);
 			this.giveHint(gb, hint[1], hint[2], hint[3]);
 			//System.out.println("There are now " + gb.getHints() + " hints left");
@@ -88,9 +88,9 @@ public class Ai extends Player{
 			//System.out.println("Max hint: " + maxHint + " Max play: " + maxPlay + " Max discard: " + maxDiscard);
 			//System.out.println(play[0] + "   " + play[1] + "   " +play[2] + "   "+ play[3]);		
 			if(original) {
-				System.out.println("Max hint: " + maxHint + " Max play: " + maxPlay + " Max discard: " + maxDiscard); //FOR DEBUG
+				//System.out.println("Max hint: " + maxHint + " Max play: " + maxPlay + " Max discard: " + maxDiscard); //FOR DEBUG
 				System.out.println("Plays: " + hand[cardPlay].toString());
-				System.out.println("Belief State was: " + beliefStates(cardPlay, gb.deck, p)); //FOR DEBUG
+				//System.out.println("Belief State was: " + beliefStates(cardPlay, gb.deck, p)); //FOR DEBUG
 				this.playCard(gb, cardPlay);
 			}
 			else
@@ -275,11 +275,11 @@ public class Ai extends Player{
 			return nope;
 		}
 		GameBoard clone = gb.getClone();
-//		int[] hint = maxHints2(gb);
+		int[] hint = maxHints2(gb);
 //		//System.out.println("Gives hint: Player: " + hint[0] +" Type: " + hint[1] + "Value: " + hint[2]);
 //		this.giveHint(clone, hint[0], hint[1], hint[2]);
 		
-		int[] hint = maxHints3(gb);
+		//int[] hint = maxHints3(gb);
 		giveHint(clone, hint[0], hint[1], hint[2]);
 		int ev = evalf(clone);
 		int[] temp = {ev, hint[0], hint[1], hint[2]};
@@ -477,8 +477,8 @@ public class Ai extends Player{
 		}
 
 		if((gb.getPoints() * GameFlow.pointMulti) + (GameFlow.lifeMulti*gb.getLife()) + (GameFlow.hintMulti*gb.getHints()) + (GameFlow.infoMulti*totalInfo) +(GameFlow.maxPointMulti*maxPoints) + 1 < 0) {
-			System.out.println("points:" + gb.getPoints() + ", life: " + gb.getLife() + ", Hints: " + gb.getHints() + ", info :" + totalInfo + ", maxP: " + maxPoints);
-			System.out.println((gb.getPoints() * GameFlow.pointMulti) + (GameFlow.lifeMulti*gb.getLife()) + (GameFlow.hintMulti*gb.getHints()) + (GameFlow.infoMulti*totalInfo) +(GameFlow.maxPointMulti*maxPoints) + 1);
+			//System.out.println("points:" + gb.getPoints() + ", life: " + gb.getLife() + ", Hints: " + gb.getHints() + ", info :" + totalInfo + ", maxP: " + maxPoints);
+			//System.out.println((gb.getPoints() * GameFlow.pointMulti) + (GameFlow.lifeMulti*gb.getLife()) + (GameFlow.hintMulti*gb.getHints()) + (GameFlow.infoMulti*totalInfo) +(GameFlow.maxPointMulti*maxPoints) + 1);
 		}
 		return (gb.getPoints() * GameFlow.pointMulti) + (GameFlow.lifeMulti*gb.getLife()) + (GameFlow.hintMulti*gb.getHints()) + (GameFlow.infoMulti*totalInfo) +(GameFlow.maxPointMulti*maxPoints) + 1;
 	}

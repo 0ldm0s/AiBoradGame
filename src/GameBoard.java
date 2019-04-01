@@ -47,8 +47,8 @@ public class GameBoard implements Cloneable{
 		players = new ArrayList<Player>(
 				Arrays.asList(new Ai(deck.initialseHand(),0), 
 						new Ai(deck.initialseHand(),1), 
-						new Ai(deck.initialseHand(),2), 
-						//new Player(deck.initialseHand()),
+						//new Ai(deck.initialseHand(),2), 
+						new Player(deck.initialseHand()),
 						new Ai(deck.initialseHand(),3))
 				);
 		discardedCards = new ArrayList<Card>();
