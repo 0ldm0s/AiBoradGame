@@ -11,15 +11,14 @@ public class Player implements Cloneable{
 	}
 	
 	public void discard(GameBoard gb, int card){
+		System.out.println("Discard: " + hand[card].toString());
 		gb.discardCard(hand[card]);
         hand[card] = gb.deck.draw();
 		recalculateTotalInfo(card);
-
-
-
 	}
 	
 	public void playCard(GameBoard gb, int card){
+		System.out.println("Plays: " + hand[card].toString());
 		gb.putCardOnTable(hand[card]);
 		hand[card] = gb.deck.draw();
 		recalculateTotalInfo(card);

@@ -2,16 +2,17 @@ import java.util.Scanner;
 
 public class GameFlow {
 
-    private GameBoard gameBoard = new GameBoard();
+    private GameBoard gameBoard;
     private Scanner scanner = new Scanner(System.in);
 	
-	public static int maxPointMulti = 0;
-	public static int hintMulti = 2;
+	public static int maxPointMulti = 1;
+	public static int hintMulti = 1;
 	public static int infoMulti = 1;
-	public static int lifeMulti = 1;
-	public static int pointMulti = 4;
+	public static int lifeMulti = 10;
+	public static int pointMulti = 14;
 
-	GameFlow() {
+	GameFlow(boolean playerBool) {
+		gameBoard = new GameBoard(playerBool);
 
 		int playerTurn = 0;
 
@@ -23,38 +24,33 @@ public class GameFlow {
 
 			if(currentPlayer instanceof Ai){
 				System.out.println("AI: " + playerTurn +": " );
-				//System.out.println(playerTurn + ":  ( " + currentPlayer.cardInfo() + ")");
-				//System.out.println("****************************************************'");
-//				System.out.println(playerTurn + ":  ( " + currentPlayer.cardInfo() + ")");
-				//        		for (Player p : gameBoard.getPlayers()) {
-				//					if(p.equals(currentPlayer))
-				//						continue;
-				//					System.out.println(p.cardInfo());
-				//				}
-				//        		System.out.println(gameBoard.getPlayers().get(playerTurn));
-				//System.out.println(currentPlayer.toString()); //FOR DEBUG
 				((Ai) currentPlayer).takeAction(gameBoard, currentPlayer);
-				//System.out.println("Player " + playerTurn + " done."); <---- TURN ON AGAIN
 			}
 			else{
 				gameBoard.printStatus(currentPlayer);
-				System.out.println("Select action: 1: discard, 2: play, 3 give hint");
+				
+				String print = "Select action: ";
+				if(gameBoard.getHints() != 8)
+					print = print + "1: discard,";
+				
+				print = print +  " 2: play,";
+				
+				if(gameBoard.getHints() != 0)
+				 print = print + " 3 give hint";
 
-
+				System.out.println(print);
 
 				int action = scanner.nextInt();
-
-				//currentPlayer.takeAction(gameBoard, action);
 
 				switch (action) {
 				case 1:
 					System.out.println("Which card?");
-					int position = scanner.nextInt();
+					int position = scanner.nextInt()-1;
 					currentPlayer.discard(gameBoard, position);
 					break;
 				case 2:
 					System.out.println("Which card?");
-					int positionPlay = scanner.nextInt();
+					int positionPlay = scanner.nextInt()-1;
 					currentPlayer.playCard(gameBoard, positionPlay);
 					break;
 				case 3:
@@ -64,7 +60,7 @@ public class GameFlow {
 					int choice = scanner.nextInt();
 					int value;
 					if(choice == 1){
-						System.out.println("Which color? R, B, W, Y, G");
+						System.out.println("Which color? R: 0, B: 1, W: 2, Y: 3, G: 4");
 						value = scanner.nextInt();
 					}
 					else{
@@ -92,12 +88,10 @@ public class GameFlow {
 
 			// Next players turn
 			playerTurn = (playerTurn + 1) % 4;
-//			if(playerTurn == 0)
-//				break;
 		}
-
+		
+		System.out.println("****************************************");
         System.out.println("Final score: " + gameBoard.getPoints());
-        //gameBoard.printStatus(gameBoard.getPlayers().get(playerTurn));
         
         scanner.close();
     }

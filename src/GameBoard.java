@@ -38,18 +38,27 @@ public class GameBoard implements Cloneable{
 
 
 	// initialize board
-	public GameBoard() {
+	public GameBoard(boolean player) {
 		super();
 		life = LIFE_MAX;
 		hints = HINT_MAX;
 		deck = new Deck();
+		if(player){
 		players = new ArrayList<Player>(
 				Arrays.asList(new Ai(deck.initialseHand(),0),
 						new Ai(deck.initialseHand(),1),
-						//new Ai(deck.initialseHand(),2),
 						new Player(deck.initialseHand()),
 						new Ai(deck.initialseHand(),3))
 				);
+		}
+		else{
+			players = new ArrayList<Player>(
+					Arrays.asList(new Ai(deck.initialseHand(),0),
+							new Ai(deck.initialseHand(),1),
+							new Ai(deck.initialseHand(),2),
+							new Ai(deck.initialseHand(),3))
+					);
+		}
 		discardedCards = new ArrayList<Card>();
 		
 		table = new int[5];
@@ -156,7 +165,7 @@ public class GameBoard implements Cloneable{
 		for (Card discardedCard : discardedCards) {
 			discard.append(discardedCard.toString()).append(" ");
 		}
-		System.out.println("Discard: " + discard);
+		System.out.println("Discarded cards: " + discard);
 		int i = 0;
 		for (Player p : players) {
 			if(player.equals(p)){
